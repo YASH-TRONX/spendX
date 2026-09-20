@@ -44,4 +44,15 @@ post_install do |installer|
       config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'NO'
     end
   end
+
+  # Fix for React Native prebuilt framework Swift symbol duplication (RCTSwiftUI)
+  installer.generated_projects.each do |project|
+    project.targets.each do |target|
+      target.build_configurations.each do |config|
+        # Disabling debug dylib generation prevents the duplicate symbol collision 
+        # between the local compilation and React.framework
+        config.build_settings['ENABLE_DEBUG_DYLIB'] = 'NO'
+      end
+    end
+  end
 end
